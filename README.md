@@ -6,7 +6,7 @@
 
 **Run**
  ```bash
-py shade**.py shaders/**filename**.shader
+py shade.py shaders/filename.shader
 ```
 Or run **app.py** and use the GUI created with [Pype](https://github.com/kokasmark/pype)
 
