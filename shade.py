@@ -34,7 +34,7 @@ uniform float _Time;
 uniform vec3 _Mouse;
 """
 
-fragment_code = open("fragment.shader","r").read()
+fragment_code = open("blackhole.shader","r").read()
 
 fragment_shader = f"{fragment_shader_top}\n{fragment_code}"
 
