@@ -9,6 +9,7 @@ from blessed import Terminal
 import threading
 import re
 import pyautogui
+import sys
 
 
 pygame.init()
@@ -34,7 +35,7 @@ uniform float _Time;
 uniform vec3 _Mouse;
 """
 
-fragment_code = open("blackhole.shader","r").read()
+fragment_code = open(sys.argv[1],"r").read()
 
 fragment_shader = f"{fragment_shader_top}\n{fragment_code}"
 
@@ -116,59 +117,6 @@ def getkey(t,timeout = None):
             fin = str(value)
         return fin
 
-def highlight(code):
-    variables = r"\b(int|float|vec2|vec3|vec4)(?!\()\b"
-    keywords = r"\b(if|else|for|while|return)\b"
-    uniforms = r"\b(_Time)\b"
-    functions = r"\b([a-zA-Z_]\w*)\s*(?=\()"
-    literals = r"\b\d+.?\d*f?\b"
-
-    patterns = [
-        (literals, term.steelblue3),
-        (variables, term.steelblue1),
-        (keywords, term.steelblue1),
-        (uniforms, term.goldenrod2),
-        (functions, term.olivedrab3),
-    ]
-    highlighted = code
-    for pattern, color in patterns:
-        highlighted = re.sub(pattern, lambda match: color + match.group(0) + term.normal, highlighted)
-
-    return highlighted
-    
-def border(code):
-    lines = code.split("\n")
-    width = len(max(lines, key = len))
-
-    horizontal_border =  f'{"".join(["-" * (width+4-len("fragment.shader"))])}\n'
-
-    bordered = f"{term.bold}fragment.shader{term.normal}"
-    bordered += horizontal_border
-
-    for line in lines:
-        bordered+=(f"| {highlight(line)}{''.join([' '*(width-len(line))])} |\n")
-    bordered += f'{"".join(["-" * (width+4)])}\n'
-    return bordered
-
-def draw_code(term,code):
-    preview = f'void main{code.split("void main")[1]}'
-    print(border(preview))
-
-def menu(term,running,code,exit,save):
-    print(term.clear())
-    print(f"Welcome to {term.bold}SHADE{term.normal}!")
-    print(f"Change {term.bold}fragment.shader{term.normal} to update your background visual!")
-    print(highlight("Uniforms: _Time, _Mouse")) 
-    print(f"Press {term.bold}s{term.normal} to save the shader and set it as a background!")
-    print(f"Press {term.bold}q{term.normal} to quit!")
-    print()
-    draw_code(term,code)
-    while running:
-        key = getkey(term)
-        if key == 'q':
-            exit()
-        if key == 's':
-            save(term)
 
 def exit_app():
     global running
@@ -201,8 +149,6 @@ previous_time = time.time()
 accumulated_time = 0.0
 
 term = Terminal()
-
-threading.Thread(target=menu, args=(term,running,fragment_code,exit_app,save_and_load,), daemon=True).start()
 
 set_window_behind_icons()
 while running:

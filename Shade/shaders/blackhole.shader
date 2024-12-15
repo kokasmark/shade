@@ -91,7 +91,7 @@ void main() {
         rayD -= (g * p / (l2)) * 0.2;
         rayD = normalize(rayD);
 
-        noiseFactor =0.5;
+        noiseFactor =  randomNoise(uv);
 
         p += rayD * (0.01 + (0.0025 * (noiseFactor - 0.5)));
 
